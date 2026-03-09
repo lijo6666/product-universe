@@ -28,6 +28,56 @@
   }
 }
 
+.deal-timer {
+  margin-top: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(16, 66, 109, 0.09);
+  border: 1px solid rgba(16, 66, 109, 0.16);
+  animation: pulse 2s ease-in-out infinite;
+
+  span {
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #35577b;
+  }
+
+  strong {
+    font-family: 'Space Grotesk', 'Manrope', sans-serif;
+    color: #143d66;
+  }
+}
+
+.spotlight-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 0.9rem;
+}
+
+.spotlight-card {
+  padding: 0.85rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.8);
+  animation: slide-up 0.55s ease both;
+
+  h3 {
+    font-size: 1rem;
+    color: #1b4268;
+    margin-bottom: 0.25rem;
+  }
+
+  p {
+    color: #607085;
+    font-size: 0.9rem;
+  }
+}
+
 .metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(160px, 1fr));
@@ -186,6 +236,10 @@ app-product-card:nth-child(4n) {
 }
 
 @media (max-width: 768px) {
+  .spotlight-strip {
+    grid-template-columns: 1fr;
+  }
+
   .metrics {
     grid-template-columns: 1fr;
   }
@@ -226,5 +280,28 @@ app-product-card:nth-child(4n) {
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -30,6 +30,9 @@
     </mat-card-content>
 
     <mat-card-actions>
+      <button mat-icon-button color="warn" (click)="wishlistToggle.emit(product)" aria-label="Toggle wishlist">
+        <mat-icon>{{ wishlisted ? 'favorite' : 'favorite_border' }}</mat-icon>
+      </button>
       <button mat-stroked-button color="primary" [routerLink]="['/products', product.id]">Details</button>
       <button mat-flat-button color="accent" [disabled]="product.stock === 0" (click)="add.emit(product)">
         Add to Cart

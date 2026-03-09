@@ -2,6 +2,25 @@
   <p class="eyebrow">Dynamic Showcase</p>
   <h1>Product Universe</h1>
   <p>Explore 50 curated products with pro filters, view modes, and a polished shopping experience.</p>
+  <div class="deal-timer">
+    <span>Flash Deals End In</span>
+    <strong>{{ flashDealCountdown$ | async }}</strong>
+  </div>
+</section>
+
+<section class="spotlight-strip">
+  <article class="spotlight-card">
+    <h3>Prime-Style Delivery</h3>
+    <p>Fast shipping simulation and responsive checkout workflow.</p>
+  </article>
+  <article class="spotlight-card">
+    <h3>Personalized Wishlist</h3>
+    <p>Sign in to save favorites and track items across sessions.</p>
+  </article>
+  <article class="spotlight-card">
+    <h3>Smart Discovery</h3>
+    <p>Use advanced filters, sort, and page controls to discover products faster.</p>
+  </article>
 </section>
 
 <section class="metrics" *ngIf="catalogMetrics$ | async as metrics">
@@ -94,7 +113,9 @@
     *ngFor="let product of pageState.pagedProducts; trackBy: trackByProductId"
     [product]="product"
     [compact]="viewMode === 'list'"
+    [wishlisted]="pageState.wishlistedIds.has(product.id)"
     (add)="addToCart($event)"
+    (wishlistToggle)="toggleWishlist($event)"
   ></app-product-card>
 </section>
 

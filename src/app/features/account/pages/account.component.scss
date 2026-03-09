@@ -1,0 +1,66 @@
+.account-page {
+  margin-top: 1rem;
+}
+
+.auth-card,
+.profile-card {
+  padding: 0.65rem;
+}
+
+.auth-form,
+.profile-form {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.actions,
+.quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.actions button,
+.quick-links a {
+  border-radius: 999px;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(130px, 1fr));
+  gap: 0.7rem;
+  margin: 1rem 0 0.6rem;
+}
+
+.stat-tile {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.7rem 0.8rem;
+  background: rgba(255, 255, 255, 0.85);
+
+  .label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #5f6f84;
+  }
+
+  .value {
+    font-family: 'Space Grotesk', 'Manrope', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #163d67;
+  }
+}
+
+.address-field {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 640px) {
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+}

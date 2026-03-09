@@ -1,0 +1,103 @@
+<section class="account-page" *ngIf="currentUser$ | async as user; else authShell">
+  <mat-card class="profile-card">
+    <mat-card-title>{{ user.fullName }}</mat-card-title>
+    <mat-card-subtitle>{{ user.email }} • Member since {{ user.createdAt | date: 'mediumDate' }}</mat-card-subtitle>
+
+    <div class="stats-row">
+      <article class="stat-tile">
+        <span class="label">Wishlist</span>
+        <span class="value">{{ wishlistCount$ | async }}</span>
+      </article>
+      <article class="stat-tile">
+        <span class="label">Orders</span>
+        <span class="value">{{ orderCount$ | async }}</span>
+      </article>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Full Name</mat-label>
+        <input matInput formControlName="fullName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Phone</mat-label>
+        <input matInput formControlName="phone" />
+      </mat-form-field>
+
+      <mat-form-field class="address-field" appearance="outline">
+        <mat-label>Address</mat-label>
+        <textarea matInput rows="3" formControlName="address"></textarea>
+      </mat-form-field>
+
+      <div class="actions">
+        <button mat-flat-button color="primary" type="submit">Save Profile</button>
+        <button mat-stroked-button color="warn" type="button" (click)="logout()">Logout</button>
+      </div>
+    </form>
+
+    <div class="quick-links">
+      <a mat-stroked-button routerLink="/orders">View Orders</a>
+      <a mat-stroked-button routerLink="/cart">Go to Cart</a>
+      <a mat-stroked-button routerLink="/products">Continue Shopping</a>
+    </div>
+  </mat-card>
+</section>
+
+<ng-template #authShell>
+  <section class="account-page">
+    <mat-card class="auth-card">
+      <mat-card-title>Account Access</mat-card-title>
+      <mat-card-subtitle>Create your account and unlock wishlist, orders, and personalized shopping.</mat-card-subtitle>
+
+      <mat-tab-group>
+        <mat-tab label="Login">
+          <form [formGroup]="loginForm" (ngSubmit)="login()" class="auth-form">
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Password</mat-label>
+              <input matInput type="password" formControlName="password" />
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" type="submit">Login</button>
+          </form>
+        </mat-tab>
+
+        <mat-tab label="Create Account">
+          <form [formGroup]="signupForm" (ngSubmit)="createAccount()" class="auth-form">
+            <mat-form-field appearance="outline">
+              <mat-label>Full Name</mat-label>
+              <input matInput formControlName="fullName" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Password</mat-label>
+              <input matInput type="password" formControlName="password" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Phone</mat-label>
+              <input matInput formControlName="phone" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Address</mat-label>
+              <textarea matInput rows="2" formControlName="address"></textarea>
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" type="submit">Create Account</button>
+          </form>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </section>
+</ng-template>

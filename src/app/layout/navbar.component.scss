@@ -3,7 +3,7 @@
   top: 0.6rem;
   z-index: 30;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto auto;
   align-items: center;
   gap: 0.7rem;
   width: min(1200px, calc(100% - 1.2rem));
@@ -78,9 +78,26 @@
   background: rgba(255, 255, 255, 0.85);
 }
 
+.wishlist-link {
+  color: #17314c;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.user-pill {
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 210px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 640px) {
   .toolbar {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
     grid-template-rows: auto auto;
     top: 0.35rem;
     height: auto;
@@ -96,6 +113,12 @@
   }
 
   .cart-link {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .wishlist-link {
     grid-column: 2;
     grid-row: 1;
     justify-self: end;
@@ -106,5 +129,10 @@
     justify-self: start;
     overflow-x: auto;
     white-space: nowrap;
+  }
+
+  .user-pill {
+    grid-column: 1 / -1;
+    justify-self: start;
   }
 }

@@ -10,10 +10,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { BehaviorSubject, combineLatest, map, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { BehaviorSubject, combineLatest, interval, map, startWith, tap } from 'rxjs';
 import { Product } from '../../../core/models/product.model';
+import { AuthService } from '../../../core/services/auth.service';
 import { CartService } from '../../../core/services/cart.service';
 import { ProductService } from '../../../core/services/product.service';
+import { WishlistService } from '../../../core/services/wishlist.service';
 import { ProductCardComponent } from '../components/product-card.component';
 
 type SortOption = 'featured' | 'priceLowHigh' | 'priceHighLow' | 'ratingHighLow' | 'discountHighLow' | 'newest';
@@ -52,6 +55,18 @@ export class ProductListComponent {
     { value: 'newest', label: 'Newest First' }
   ];
   readonly pageSizeOptions = [8, 12, 16, 24];
+  readonly flashDealCountdown$ = interval(1000).pipe(
+    startWith(0),
+    map(() => {
+      const end = new Date();
+      end.setHours(23, 59, 59, 999);
+      const diff = Math.max(end.getTime() - Date.now(), 0);
+      const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
+      const minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+      const seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+      return `${hours}:${minutes}:${seconds}`;
+    })
+  );
 
   private readonly searchTermSubject = new BehaviorSubject<string>('');
   private readonly selectedCategorySubject = new BehaviorSubject<string>('All');
@@ -132,8 +147,13 @@ export class ProductListComponent {
       return { inStockCount, discountedCount, averageRating };
     })
   );
-  readonly pagination$ = combineLatest([this.filteredProducts$, this.pageSizeSubject, this.currentPageSubject]).pipe(
-    map(([products, pageSize, currentPage]) => {
+  readonly pagination$ = combineLatest([
+    this.filteredProducts$,
+    this.pageSizeSubject,
+    this.currentPageSubject,
+    this.wishlistService.ids$
+  ]).pipe(
+    map(([products, pageSize, currentPage, wishlistIds]) => {
       const totalItems = products.length;
       const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
       const safePage = Math.min(currentPage, totalPages);
@@ -142,6 +162,7 @@ export class ProductListComponent {
       const pagedProducts = products.slice(startIndex, endIndex);
       return {
         pagedProducts,
+        wishlistedIds: new Set(wishlistIds),
         totalItems,
         totalPages,
         currentPage: safePage,
@@ -172,7 +193,10 @@ export class ProductListComponent {
   constructor(
     private readonly productService: ProductService,
     private readonly cartService: CartService,
-    private readonly snackBar: MatSnackBar
+    private readonly wishlistService: WishlistService,
+    private readonly authService: AuthService,
+    private readonly snackBar: MatSnackBar,
+    private readonly router: Router
   ) {}
 
   trackByProductId(_: number, product: Product): number {
@@ -258,6 +282,22 @@ export class ProductListComponent {
 
     this.cartService.addToCart(product, 1);
     this.snackBar.open(`${product.name} added to cart.`, 'Dismiss', { duration: 2500 });
+  }
+
+  toggleWishlist(product: Product): void {
+    if (!this.authService.currentUser) {
+      this.snackBar.open('Please create or login to an account to use wishlist.', 'Account', { duration: 2800 });
+      this.router.navigateByUrl('/account');
+      return;
+    }
+
+    const alreadyWishlisted = this.wishlistService.contains(product.id);
+    this.wishlistService.toggle(product.id);
+    this.snackBar.open(
+      alreadyWishlisted ? `${product.name} removed from wishlist.` : `${product.name} added to wishlist.`,
+      'Dismiss',
+      { duration: 2200 }
+    );
   }
 
   private resetPagination(): void {

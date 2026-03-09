@@ -23,6 +23,10 @@ export const routes: Routes = [
     loadChildren: () => import('./features/orders/orders.routes').then((m) => m.ORDER_ROUTES)
   },
   {
+    path: 'account',
+    loadComponent: () => import('./features/account/pages/account.component').then((m) => m.AccountComponent)
+  },
+  {
     path: '**',
     redirectTo: 'products'
   }

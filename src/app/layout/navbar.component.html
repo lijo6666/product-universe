@@ -11,7 +11,19 @@
     <a mat-button routerLink="/products" routerLinkActive="active-link">Products</a>
     <a mat-button routerLink="/admin" routerLinkActive="active-link">Add Product</a>
     <a mat-button routerLink="/orders" routerLinkActive="active-link">Orders</a>
+    <a mat-button routerLink="/account" routerLinkActive="active-link">Account</a>
   </nav>
+
+  <a
+    class="wishlist-link"
+    mat-icon-button
+    routerLink="/account"
+    [matBadge]="(wishlistCount$ | async) ?? 0"
+    matBadgeColor="accent"
+    aria-label="Open wishlist and account"
+  >
+    <mat-icon>favorite</mat-icon>
+  </a>
 
   <a
     class="cart-link"
@@ -23,4 +35,15 @@
   >
     <mat-icon>shopping_cart</mat-icon>
   </a>
+
+  <button mat-stroked-button class="user-pill" routerLink="/account" *ngIf="currentUser$ | async as user; else guest">
+    <mat-icon>person</mat-icon>
+    {{ user.fullName }}
+  </button>
+  <ng-template #guest>
+    <button mat-flat-button color="primary" class="user-pill" routerLink="/account">
+      <mat-icon>login</mat-icon>
+      Sign In
+    </button>
+  </ng-template>
 </mat-toolbar>
