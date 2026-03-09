@@ -9,6 +9,20 @@
   filter: saturate(1.04);
 }
 
+.product-card.compact mat-card {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+}
+
+.product-card.compact .media-wrap {
+  height: 100%;
+}
+
+.product-card.compact img[mat-card-image] {
+  height: 100%;
+  min-height: 210px;
+}
+
 mat-card {
   display: flex;
   flex-direction: column;
@@ -101,6 +115,10 @@ mat-card-actions button {
 }
 
 @media (max-width: 768px) {
+  .product-card.compact mat-card {
+    grid-template-columns: 1fr;
+  }
+
   img[mat-card-image] {
     height: 190px;
   }

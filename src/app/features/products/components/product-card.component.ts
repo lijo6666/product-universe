@@ -15,6 +15,7 @@ import { ProductStatusDirective } from '../../../shared/directives/product-statu
 })
 export class ProductCardComponent {
   @Input({ required: true }) product!: Product;
+  @Input() compact = false;
   @Output() readonly add = new EventEmitter<Product>();
 
   get discountedPrice(): number {

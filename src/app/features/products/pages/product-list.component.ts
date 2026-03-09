@@ -1,7 +1,9 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, DecimalPipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -14,7 +16,8 @@ import { CartService } from '../../../core/services/cart.service';
 import { ProductService } from '../../../core/services/product.service';
 import { ProductCardComponent } from '../components/product-card.component';
 
-type SortOption = 'featured' | 'priceLowHigh' | 'priceHighLow' | 'ratingHighLow' | 'newest';
+type SortOption = 'featured' | 'priceLowHigh' | 'priceHighLow' | 'ratingHighLow' | 'discountHighLow' | 'newest';
+type ViewMode = 'grid' | 'list';
 
 @Component({
   selector: 'app-product-list',
@@ -23,8 +26,11 @@ type SortOption = 'featured' | 'priceLowHigh' | 'priceHighLow' | 'ratingHighLow'
     NgFor,
     NgIf,
     AsyncPipe,
+    DecimalPipe,
     FormsModule,
     MatButtonModule,
+    MatButtonToggleModule,
+    MatChipsModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
@@ -42,14 +48,19 @@ export class ProductListComponent {
     { value: 'priceLowHigh', label: 'Price: Low to High' },
     { value: 'priceHighLow', label: 'Price: High to Low' },
     { value: 'ratingHighLow', label: 'Rating: High to Low' },
+    { value: 'discountHighLow', label: 'Discount: High to Low' },
     { value: 'newest', label: 'Newest First' }
   ];
+  readonly pageSizeOptions = [8, 12, 16, 24];
 
   private readonly searchTermSubject = new BehaviorSubject<string>('');
   private readonly selectedCategorySubject = new BehaviorSubject<string>('All');
   private readonly sortBySubject = new BehaviorSubject<SortOption>('featured');
   private readonly inStockOnlySubject = new BehaviorSubject<boolean>(false);
   private readonly maxPriceSubject = new BehaviorSubject<number>(100000);
+  private readonly pageSizeSubject = new BehaviorSubject<number>(12);
+  private readonly currentPageSubject = new BehaviorSubject<number>(1);
+  private readonly viewModeSubject = new BehaviorSubject<ViewMode>('grid');
 
   readonly products$ = this.productService.getProducts().pipe(
     tap((products) => {
@@ -98,6 +109,8 @@ export class ProductListComponent {
             return second.price - first.price;
           case 'ratingHighLow':
             return second.rating - first.rating;
+          case 'discountHighLow':
+            return second.discountPercent - first.discountPercent;
           case 'newest':
             return new Date(second.releasedAt).getTime() - new Date(first.releasedAt).getTime();
           case 'featured':
@@ -108,12 +121,50 @@ export class ProductListComponent {
     })
   );
   readonly totalProductsCount$ = this.products$.pipe(map((products) => products.length));
-  readonly filteredProductsCount$ = this.filteredProducts$.pipe(map((products) => products.length));
+  readonly catalogMetrics$ = this.filteredProducts$.pipe(
+    map((products) => {
+      const inStockCount = products.filter((product) => product.stock > 0).length;
+      const discountedCount = products.filter((product) => product.discountPercent > 0).length;
+      const averageRating = products.length
+        ? products.reduce((sum, product) => sum + product.rating, 0) / products.length
+        : 0;
+
+      return { inStockCount, discountedCount, averageRating };
+    })
+  );
+  readonly pagination$ = combineLatest([this.filteredProducts$, this.pageSizeSubject, this.currentPageSubject]).pipe(
+    map(([products, pageSize, currentPage]) => {
+      const totalItems = products.length;
+      const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+      const safePage = Math.min(currentPage, totalPages);
+      const startIndex = (safePage - 1) * pageSize;
+      const endIndex = Math.min(startIndex + pageSize, totalItems);
+      const pagedProducts = products.slice(startIndex, endIndex);
+      return {
+        pagedProducts,
+        totalItems,
+        totalPages,
+        currentPage: safePage,
+        startIndex,
+        endIndex
+      };
+    }),
+    tap((state) => {
+      if (state.currentPage !== this.currentPage) {
+        this.currentPage = state.currentPage;
+        this.currentPageSubject.next(state.currentPage);
+      }
+    })
+  );
+  readonly viewMode$ = this.viewModeSubject.asObservable();
 
   searchTerm = '';
   selectedCategory = 'All';
   sortBy: SortOption = 'featured';
   inStockOnly = false;
+  viewMode: ViewMode = 'grid';
+  pageSize = 12;
+  currentPage = 1;
   maxPrice = 100000;
   maxPriceLimit = 100000;
   categories: string[] = ['All'];
@@ -130,24 +181,54 @@ export class ProductListComponent {
 
   onSearchTermChange(value: string): void {
     this.searchTermSubject.next(value);
+    this.resetPagination();
   }
 
   onCategoryChange(value: string): void {
     this.selectedCategorySubject.next(value);
+    this.resetPagination();
   }
 
   onSortChange(value: SortOption): void {
     this.sortBySubject.next(value);
+    this.resetPagination();
   }
 
   onStockToggle(value: boolean): void {
     this.inStockOnlySubject.next(value);
+    this.resetPagination();
   }
 
   onMaxPriceChange(value: number): void {
     const normalizedValue = Number.isNaN(Number(value)) ? this.maxPriceLimit : Number(value);
     this.maxPrice = Math.max(0, Math.min(this.maxPriceLimit, normalizedValue));
     this.maxPriceSubject.next(this.maxPrice);
+    this.resetPagination();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.pageSize = value;
+    this.pageSizeSubject.next(value);
+    this.resetPagination();
+  }
+
+  onViewModeChange(value: ViewMode): void {
+    this.viewMode = value;
+    this.viewModeSubject.next(value);
+  }
+
+  goToPreviousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage -= 1;
+      this.currentPageSubject.next(this.currentPage);
+    }
+  }
+
+  goToNextPage(totalPages: number): void {
+    if (this.currentPage < totalPages) {
+      this.currentPage += 1;
+      this.currentPageSubject.next(this.currentPage);
+    }
   }
 
   clearFilters(): void {
@@ -155,11 +236,17 @@ export class ProductListComponent {
     this.selectedCategory = 'All';
     this.sortBy = 'featured';
     this.inStockOnly = false;
+    this.pageSize = 12;
+    this.currentPage = 1;
     this.maxPrice = this.maxPriceLimit;
+    this.viewMode = 'grid';
     this.searchTermSubject.next(this.searchTerm);
     this.selectedCategorySubject.next(this.selectedCategory);
     this.sortBySubject.next(this.sortBy);
     this.inStockOnlySubject.next(this.inStockOnly);
+    this.pageSizeSubject.next(this.pageSize);
+    this.currentPageSubject.next(this.currentPage);
+    this.viewModeSubject.next(this.viewMode);
     this.maxPriceSubject.next(this.maxPrice);
   }
 
@@ -171,5 +258,10 @@ export class ProductListComponent {
 
     this.cartService.addToCart(product, 1);
     this.snackBar.open(`${product.name} added to cart.`, 'Dismiss', { duration: 2500 });
+  }
+
+  private resetPagination(): void {
+    this.currentPage = 1;
+    this.currentPageSubject.next(1);
   }
 }

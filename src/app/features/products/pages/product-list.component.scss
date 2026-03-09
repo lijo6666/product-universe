@@ -1,5 +1,5 @@
 .hero {
-  margin: 1rem 0 1.25rem;
+  margin: 1rem 0 1.15rem;
   padding: 1.4rem 1.35rem;
   border-radius: 22px;
   border: 1px solid var(--line);
@@ -28,9 +28,40 @@
   }
 }
 
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 0.9rem;
+}
+
+.metric-card {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.82);
+
+  .metric-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #5e7189;
+  }
+
+  .metric-value {
+    font-family: 'Space Grotesk', 'Manrope', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #133a61;
+  }
+}
+
 .filters {
   display: grid;
-  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  grid-template-columns: repeat(4, minmax(170px, 1fr));
   gap: 0.85rem;
   margin-bottom: 1rem;
   padding: 0.95rem;
@@ -45,10 +76,38 @@
   margin: 0;
 }
 
+.filter-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  grid-column: span 2;
+  min-height: 56px;
+  padding: 0.2rem 0.1rem;
+}
+
+.view-switch {
+  border-top: 1px dashed var(--line);
+  padding-top: 0.7rem;
+}
+
+.view-switch mat-form-field {
+  max-width: 130px;
+}
+
+.filter-actions button {
+  border-radius: 999px;
+  font-weight: 700;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
+}
+
+.grid.list-view {
+  grid-template-columns: 1fr;
 }
 
 .catalog-stat {
@@ -73,21 +132,6 @@
     font-weight: 700;
     color: #123963;
   }
-}
-
-.filter-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.7rem;
-  grid-column: span 2;
-  min-height: 56px;
-  padding: 0.2rem 0.1rem;
-}
-
-.filter-actions button {
-  border-radius: 999px;
-  font-weight: 700;
 }
 
 .empty-state {
@@ -116,6 +160,19 @@
   }
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.pagination button {
+  border-radius: 999px;
+  font-weight: 700;
+}
+
 app-product-card {
   animation: lift-in 0.45s ease both;
 }
@@ -129,6 +186,10 @@ app-product-card:nth-child(4n) {
 }
 
 @media (max-width: 768px) {
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+
   .filters {
     grid-template-columns: 1fr 1fr;
   }
@@ -149,6 +210,10 @@ app-product-card:nth-child(4n) {
 
   .filters {
     grid-template-columns: 1fr;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
   }
 }
 

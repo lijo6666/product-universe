@@ -1,7 +1,22 @@
 <section class="hero">
   <p class="eyebrow">Dynamic Showcase</p>
   <h1>Product Universe</h1>
-  <p>Explore categories, inspect product signals, and build your cart in a fast reactive flow.</p>
+  <p>Explore 50 curated products with pro filters, view modes, and a polished shopping experience.</p>
+</section>
+
+<section class="metrics" *ngIf="catalogMetrics$ | async as metrics">
+  <article class="metric-card">
+    <span class="metric-label">In Stock</span>
+    <span class="metric-value">{{ metrics.inStockCount }}</span>
+  </article>
+  <article class="metric-card">
+    <span class="metric-label">Discounted</span>
+    <span class="metric-value">{{ metrics.discountedCount }}</span>
+  </article>
+  <article class="metric-card">
+    <span class="metric-label">Avg. Rating</span>
+    <span class="metric-value">{{ metrics.averageRating | number: '1.1-1' }}</span>
+  </article>
 </section>
 
 <section class="filters">
@@ -41,23 +56,63 @@
     <mat-slide-toggle [(ngModel)]="inStockOnly" (ngModelChange)="onStockToggle($event)">In Stock Only</mat-slide-toggle>
     <button mat-stroked-button type="button" (click)="clearFilters()">Clear Filters</button>
   </div>
+
+  <div class="filter-actions view-switch">
+    <mat-button-toggle-group
+      [value]="viewMode"
+      (change)="onViewModeChange($event.value)"
+      aria-label="Switch product view mode"
+    >
+      <mat-button-toggle value="grid">Grid</mat-button-toggle>
+      <mat-button-toggle value="list">List</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Page size</mat-label>
+      <mat-select [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+        <mat-option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 </section>
 
-<section class="grid" *ngIf="filteredProducts$ | async as products">
+<section class="grid" *ngIf="pagination$ | async as pageState" [class.list-view]="viewMode === 'list'">
   <article class="catalog-stat">
-    <span class="label">Showing {{ products.length }} of {{ totalProductsCount$ | async }} products</span>
-    <span class="value">Max ₹{{ maxPrice }}</span>
+    <span class="label">
+      Showing {{ pageState.startIndex + 1 }}-{{ pageState.endIndex }} of {{ pageState.totalItems }} products
+    </span>
+    <span class="value">Page {{ pageState.currentPage }} / {{ pageState.totalPages }}</span>
   </article>
 
-  <article class="empty-state" *ngIf="!products.length">
+  <article class="empty-state" *ngIf="!pageState.totalItems">
     <h3>No products match your filters</h3>
     <p>Try clearing filters or widening your search criteria.</p>
     <button mat-flat-button color="primary" type="button" (click)="clearFilters()">Reset and Show All</button>
   </article>
 
   <app-product-card
-    *ngFor="let product of products; trackBy: trackByProductId"
+    *ngFor="let product of pageState.pagedProducts; trackBy: trackByProductId"
     [product]="product"
+    [compact]="viewMode === 'list'"
     (add)="addToCart($event)"
   ></app-product-card>
+</section>
+
+<section class="pagination" *ngIf="pagination$ | async as pageState">
+  <button mat-stroked-button type="button" (click)="goToPreviousPage()" [disabled]="pageState.currentPage <= 1">
+    Previous
+  </button>
+  <mat-chip-set>
+    <mat-chip>Page {{ pageState.currentPage }}</mat-chip>
+    <mat-chip>{{ pageState.totalItems }} items</mat-chip>
+  </mat-chip-set>
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="goToNextPage(pageState.totalPages)"
+    [disabled]="pageState.currentPage >= pageState.totalPages"
+  >
+    Next
+  </button>
 </section>
