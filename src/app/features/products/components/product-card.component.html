@@ -1,0 +1,38 @@
+<article
+  class="product-card"
+  appProductStatus
+  [stock]="product.stock"
+  [discountPercent]="product.discountPercent"
+>
+  <mat-card>
+    <div class="media-wrap">
+      <span class="floating-tag">{{ product.category }}</span>
+      <img mat-card-image [src]="product.imageUrl" [alt]="product.name" />
+    </div>
+
+    <mat-card-header>
+      <mat-card-title>{{ product.name }}</mat-card-title>
+      <mat-card-subtitle>Rating {{ product.rating }} / 5</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p class="description">{{ product.description }}</p>
+      <div class="price-row">
+        <p class="price">{{ discountedPrice | currency: 'INR' }}</p>
+        <p class="original-price" *ngIf="product.discountPercent > 0">{{ product.price | currency: 'INR' }}</p>
+      </div>
+      <p class="meta">Released: {{ product.releasedAt | date }}</p>
+      <p class="meta" *ngIf="product.discountPercent > 0">Discount: {{ product.discountPercent }}%</p>
+      <p class="stock" [class.out-of-stock]="product.stock === 0">
+        {{ product.stock === 0 ? 'Out of stock' : product.stock + ' in stock' }}
+      </p>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" [routerLink]="['/products', product.id]">Details</button>
+      <button mat-flat-button color="accent" [disabled]="product.stock === 0" (click)="add.emit(product)">
+        Add to Cart
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</article>

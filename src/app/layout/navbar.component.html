@@ -1,0 +1,26 @@
+<mat-toolbar class="toolbar">
+  <a class="brand" routerLink="/products">
+    <span class="brand-icon-wrap"><mat-icon>auto_awesome</mat-icon></span>
+    <span class="brand-copy">
+      <span class="brand-name">LT HyperCatalog</span>
+      <span class="brand-sub">immersive commerce demo</span>
+    </span>
+  </a>
+
+  <nav class="links">
+    <a mat-button routerLink="/products" routerLinkActive="active-link">Products</a>
+    <a mat-button routerLink="/admin" routerLinkActive="active-link">Add Product</a>
+    <a mat-button routerLink="/orders" routerLinkActive="active-link">Orders</a>
+  </nav>
+
+  <a
+    class="cart-link"
+    mat-icon-button
+    routerLink="/cart"
+    [matBadge]="(itemCount$ | async) ?? 0"
+    matBadgeColor="warn"
+    aria-label="Open shopping cart"
+  >
+    <mat-icon>shopping_cart</mat-icon>
+  </a>
+</mat-toolbar>

@@ -1,0 +1,27 @@
+.orders-page {
+  display: grid;
+  gap: 1.05rem;
+  margin-top: 1rem;
+}
+
+.order-card {
+  border-left: 6px solid #0f4c81;
+  overflow: hidden;
+  position: relative;
+}
+
+.total {
+  margin-top: 0.9rem;
+  color: #10385f;
+  font-size: 1.18rem;
+}
+
+mat-chip-set {
+  margin-top: 0.6rem;
+}
+
+mat-chip {
+  border: 1px solid var(--line) !important;
+  background: rgba(255, 248, 237, 0.88) !important;
+  color: #1f3f5d !important;
+}

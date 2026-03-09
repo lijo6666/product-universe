@@ -1,0 +1,62 @@
+.detail {
+  display: grid;
+  grid-template-columns: minmax(260px, 420px) 1fr;
+  gap: 1.1rem;
+  margin-top: 1rem;
+}
+
+.detail-image {
+  width: 100%;
+  border-radius: 20px;
+  object-fit: cover;
+  min-height: 360px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+}
+
+.price {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #0f355d;
+}
+
+.availability {
+  font-weight: 600;
+  color: #0b7f65;
+  margin-top: 0.5rem;
+}
+
+.low-stock {
+  color: #bf5f0a;
+}
+
+mat-card {
+  padding: 0.4rem 0.25rem;
+}
+
+mat-chip-listbox {
+  margin-top: 0.9rem;
+}
+
+mat-chip {
+  border: 1px solid var(--line) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #284561 !important;
+}
+
+mat-card-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+mat-card-actions button {
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .detail {
+    grid-template-columns: 1fr;
+  }
+}

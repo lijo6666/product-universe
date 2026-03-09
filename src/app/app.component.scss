@@ -1,0 +1,48 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
+}
+
+:host::before,
+:host::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  width: 48vmax;
+  height: 48vmax;
+  border-radius: 50%;
+  filter: blur(38px);
+  pointer-events: none;
+}
+
+:host::before {
+  top: -14vmax;
+  right: -16vmax;
+  background: radial-gradient(circle, rgba(255, 107, 45, 0.2) 0%, rgba(255, 107, 45, 0) 68%);
+  animation: drift 16s ease-in-out infinite alternate;
+}
+
+:host::after {
+  bottom: -26vmax;
+  left: -12vmax;
+  background: radial-gradient(circle, rgba(0, 137, 123, 0.18) 0%, rgba(0, 137, 123, 0) 70%);
+  animation: drift 20s ease-in-out infinite alternate-reverse;
+}
+
+.page-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(2.2vmax, 1.5vmax, 0) scale(1.08);
+  }
+}

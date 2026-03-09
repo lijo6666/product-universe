@@ -1,0 +1,109 @@
+<section class="cart-page" *ngIf="cart$ | async as cartItems">
+  <mat-card>
+    <mat-card-title>Shopping Cart</mat-card-title>
+    <mat-card-subtitle>Review quantities, totals, and proceed with secure checkout details.</mat-card-subtitle>
+    <mat-card-content *ngIf="cartItems.length; else emptyState">
+      <table mat-table [dataSource]="cartItems" class="cart-table">
+        <ng-container matColumnDef="product">
+          <th mat-header-cell *matHeaderCellDef>Product</th>
+          <td mat-cell *matCellDef="let item">{{ item.product.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef>Price</th>
+          <td mat-cell *matCellDef="let item">{{ item.product.price | currency: 'INR' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantity</th>
+          <td mat-cell *matCellDef="let item">
+            <button mat-icon-button (click)="changeQuantity(item, -1)"><mat-icon>remove</mat-icon></button>
+            <span>{{ item.quantity }}</span>
+            <button mat-icon-button (click)="changeQuantity(item, 1)"><mat-icon>add</mat-icon></button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef>Total</th>
+          <td mat-cell *matCellDef="let item">{{ item.product.price * item.quantity | currency: 'INR' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let item">
+            <button mat-button color="warn" (click)="removeItem(item.product.id)">Remove</button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <div class="summary" *ngIf="total$ | async as total">
+        <p><strong>Subtotal:</strong> {{ (total + calculateDiscount(cartItems)) | currency: 'INR' }}</p>
+        <p><strong>Discount:</strong> -{{ calculateDiscount(cartItems) | currency: 'INR' }}</p>
+        <p class="grand"><strong>Payable:</strong> {{ total | currency: 'INR' }}</p>
+      </div>
+    </mat-card-content>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <p>No items in cart yet.</p>
+        <button mat-flat-button color="primary" routerLink="/products">Browse Products</button>
+      </div>
+    </ng-template>
+  </mat-card>
+
+  <ng-container *ngIf="total$ | async as total">
+    <mat-card class="checkout" *ngIf="cartItems.length > 0">
+      <mat-card-title>Checkout Details</mat-card-title>
+
+      <form [formGroup]="checkoutForm" (ngSubmit)="checkout(cartItems, total)">
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Full Name</mat-label>
+            <input matInput formControlName="fullName" />
+            <mat-error *ngIf="checkoutForm.controls.fullName.invalid">Minimum 3 characters required.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" />
+            <mat-error *ngIf="checkoutForm.controls.email.invalid">Valid email required.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Phone</mat-label>
+            <input matInput formControlName="phone" />
+            <mat-error *ngIf="checkoutForm.controls.phone.invalid">Enter a valid 10-digit mobile number.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Address</mat-label>
+            <textarea matInput rows="3" formControlName="address"></textarea>
+            <mat-error *ngIf="checkoutForm.controls.address.invalid">Address is required.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>City</mat-label>
+            <input matInput formControlName="city" />
+            <mat-error *ngIf="checkoutForm.controls.city.invalid">City is required.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>ZIP Code</mat-label>
+            <input matInput formControlName="zipCode" />
+            <mat-error *ngIf="checkoutForm.controls.zipCode.invalid">6-digit ZIP code required.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="notes" appearance="outline">
+            <mat-label>Order Notes</mat-label>
+            <textarea matInput rows="2" formControlName="notes"></textarea>
+          </mat-form-field>
+        </div>
+
+        <button mat-flat-button color="primary" type="submit">Place Order</button>
+      </form>
+    </mat-card>
+  </ng-container>
+</section>

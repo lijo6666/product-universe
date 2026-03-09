@@ -1,0 +1,56 @@
+<mat-card class="admin-card">
+  <mat-card-title>Add Product (Admin Simulation)</mat-card-title>
+  <mat-card-subtitle>Uses template-driven forms and local mock persistence.</mat-card-subtitle>
+
+  <form #productForm="ngForm" (ngSubmit)="submitForm(productForm)" class="admin-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Product Name</mat-label>
+      <input matInput name="name" [(ngModel)]="model.name" required minlength="3" #name="ngModel" />
+      <mat-error *ngIf="name.invalid && name.touched">Name must be at least 3 characters.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput rows="3" name="description" [(ngModel)]="model.description" required></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Image URL</mat-label>
+      <input matInput name="imageUrl" [(ngModel)]="model.imageUrl" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select name="category" [(ngModel)]="model.category" required>
+        <mat-option *ngFor="let category of categories" [value]="category">{{ category }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Price</mat-label>
+      <input matInput type="number" name="price" [(ngModel)]="model.price" required min="100" max="500000" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Stock</mat-label>
+      <input matInput type="number" name="stock" [(ngModel)]="model.stock" required min="0" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Discount (%)</mat-label>
+      <input matInput type="number" name="discountPercent" [(ngModel)]="model.discountPercent" min="0" max="90" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Release Date</mat-label>
+      <input matInput type="date" name="releasedAt" [(ngModel)]="model.releasedAt" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Rating (1-5)</mat-label>
+      <input matInput type="number" name="rating" [(ngModel)]="model.rating" required min="1" max="5" />
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" type="submit" [disabled]="productForm.invalid">Add Product</button>
+  </form>
+</mat-card>

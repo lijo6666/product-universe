@@ -1,0 +1,63 @@
+<section class="hero">
+  <p class="eyebrow">Dynamic Showcase</p>
+  <h1>Product Universe</h1>
+  <p>Explore categories, inspect product signals, and build your cart in a fast reactive flow.</p>
+</section>
+
+<section class="filters">
+  <mat-form-field appearance="outline">
+    <mat-label>Search products</mat-label>
+    <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchTermChange($event)" placeholder="Type name or keyword" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Category</mat-label>
+    <mat-select [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange($event)">
+      <mat-option *ngFor="let category of categories$ | async" [value]="category">{{ category }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Sort by</mat-label>
+    <mat-select [(ngModel)]="sortBy" (ngModelChange)="onSortChange($event)">
+      <mat-option *ngFor="let option of sortOptions" [value]="option.value">{{ option.label }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Max price (INR)</mat-label>
+    <input
+      matInput
+      type="number"
+      min="0"
+      [max]="maxPriceLimit"
+      [(ngModel)]="maxPrice"
+      (ngModelChange)="onMaxPriceChange($event)"
+    />
+  </mat-form-field>
+
+  <div class="filter-actions">
+    <mat-slide-toggle [(ngModel)]="inStockOnly" (ngModelChange)="onStockToggle($event)">In Stock Only</mat-slide-toggle>
+    <button mat-stroked-button type="button" (click)="clearFilters()">Clear Filters</button>
+  </div>
+</section>
+
+<section class="grid" *ngIf="filteredProducts$ | async as products">
+  <article class="catalog-stat">
+    <span class="label">Showing {{ products.length }} of {{ totalProductsCount$ | async }} products</span>
+    <span class="value">Max ₹{{ maxPrice }}</span>
+  </article>
+
+  <article class="empty-state" *ngIf="!products.length">
+    <h3>No products match your filters</h3>
+    <p>Try clearing filters or widening your search criteria.</p>
+    <button mat-flat-button color="primary" type="button" (click)="clearFilters()">Reset and Show All</button>
+  </article>
+
+  <app-product-card
+    *ngFor="let product of products; trackBy: trackByProductId"
+    [product]="product"
+    (add)="addToCart($event)"
+  ></app-product-card>
+</section>

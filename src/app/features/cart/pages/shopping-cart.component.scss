@@ -1,0 +1,79 @@
+.cart-page {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: 1rem;
+}
+
+.cart-table {
+  width: 100%;
+  overflow: auto;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+
+mat-card-title {
+  color: #10385f;
+}
+
+table .mat-mdc-header-row {
+  background: rgba(15, 76, 129, 0.09);
+}
+
+table .mat-mdc-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.summary {
+  margin-top: 1rem;
+  text-align: right;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: linear-gradient(100deg, rgba(255, 107, 45, 0.09), rgba(0, 137, 123, 0.08));
+
+  p {
+    margin: 0.3rem 0;
+  }
+
+  .grand {
+    font-size: 1.3rem;
+    color: #10385f;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 1.4rem 0;
+  color: #4f6074;
+}
+
+.checkout form {
+  margin-top: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 0.8rem;
+}
+
+.notes {
+  grid-column: 1 / -1;
+}
+
+.checkout button[type='submit'] {
+  border-radius: 999px;
+  padding-inline: 1.35rem;
+  font-weight: 700;
+}
+
+td button[mat-icon-button] {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

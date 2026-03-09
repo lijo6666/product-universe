@@ -1,0 +1,36 @@
+.admin-card {
+  margin-top: 1rem;
+  padding: 0.35rem;
+  border: 1px solid var(--line-strong);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(250, 255, 252, 0.92)),
+    radial-gradient(circle at 100% 0%, rgba(0, 137, 123, 0.1), transparent 50%);
+}
+
+mat-card-title {
+  color: #0f355d;
+}
+
+mat-card-subtitle {
+  color: #587086;
+}
+
+.admin-form {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 0.85rem;
+}
+
+button {
+  width: max-content;
+  border-radius: 999px;
+  padding-inline: 1.3rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .admin-form {
+    grid-template-columns: 1fr;
+  }
+}
